@@ -202,19 +202,24 @@
                     botaoCancelar.textContent = "Cancelar";
                     botaoCancelar.className = "cancelar";
                     botaoCancelar.onclick = function () {
-                        lista.removeChild(item);
-                        alert(`Agendamento de ${agendamento.nome} no dia ${agendamento.data} às ${agendamento.horario} foi cancelado.`);
+                        const confirmacao = confirm(`Para cancelar este agendamento, é necessário efetuar um pagamento de R$ 5,00 via PIX no número 11932184626. Após o pagamento, clique em "OK" para continuar.`);
+                        if (confirmacao) {
+                            lista.removeChild(item);
+                            alert(`Agendamento de ${agendamento.nome} no dia ${agendamento.data} às ${agendamento.horario} foi cancelado.`);
 
-                        // Reativar o botão de horário correspondente
-                        const botoesHorarios = document.querySelectorAll("#times-list .horario");
-                        botoesHorarios.forEach(botao => {
-                            if (botao.textContent === agendamento.horario) {
-                                botao.style.display = "inline-block";
-                            }
-                        });
+                            // Reativar o botão de horário correspondente
+                            const botoesHorarios = document.querySelectorAll("#times-list .horario");
+                            botoesHorarios.forEach(botao => {
+                                if (botao.textContent === agendamento.horario) {
+                                    botao.style.display = "inline-block";
+                                }
+                            });
 
-                        // Atualizar localStorage após cancelamento
-                        salvarDados();
+                            // Atualizar localStorage após cancelamento
+                            salvarDados();
+                        } else {
+                            alert("Cancelamento não realizado. O pagamento é obrigatório.");
+                        }
                     };
 
                     item.appendChild(botaoCancelar);
@@ -281,19 +286,24 @@
             botaoCancelar.textContent = "Cancelar";
             botaoCancelar.className = "cancelar";
             botaoCancelar.onclick = function () {
-                lista.removeChild(item);
-                alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
+                const confirmacao = confirm(`Para cancelar este agendamento, é necessário efetuar um pagamento de R$ 5,00 via PIX no número 11932184626. Após o pagamento, clique em "OK" para continuar.`);
+                if (confirmacao) {
+                    lista.removeChild(item);
+                    alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
 
-                // Reativar o botão de horário correspondente
-                const botoesHorarios = document.querySelectorAll("#times-list .horario");
-                botoesHorarios.forEach(botao => {
-                    if (botao.textContent === horario) {
-                        botao.style.display = "inline-block";
-                    }
-                });
+                    // Reativar o botão de horário correspondente
+                    const botoesHorarios = document.querySelectorAll("#times-list .horario");
+                    botoesHorarios.forEach(botao => {
+                        if (botao.textContent === horario) {
+                            botao.style.display = "inline-block";
+                        }
+                    });
 
-                // Atualizar localStorage após cancelamento
-                salvarDados();
+                    // Atualizar localStorage após cancelamento
+                    salvarDados();
+                } else {
+                    alert("Cancelamento não realizado. O pagamento é obrigatório.");
+                }
             };
 
             item.appendChild(botaoCancelar);
