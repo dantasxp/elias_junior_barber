@@ -175,15 +175,26 @@
     <script>
         function agendarHorario(event, horario) {
             event.preventDefault();
-            let nome = document.getElementById("name").value;
+            let nome = document.getElementById("name").value.trim();
             let data = document.getElementById("date").value;
-            
+
             if (nome === "" || data === "") {
                 alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
                 return;
             }
 
-            let listaAgendados = document.getElementById("scheduled-list");
+            // Verificar se já existe um agendamento para o mesmo horário e data
+            let listaAgendados = document.getElementById("scheduled-list").children;
+            for (let i = 0; i < listaAgendados.length; i++) {
+                let item = listaAgendados[i].textContent;
+                if (item.includes(`${data} - ${horario}`)) {
+                    alert(`O horário ${horario} já está agendado para esta data.`);
+                    return;
+                }
+            }
+
+            // Criar novo agendamento
+            let lista = document.getElementById("scheduled-list");
             let item = document.createElement("li");
             item.textContent = `${data} - ${horario} - ${nome}`;
             
@@ -192,12 +203,12 @@
             botaoCancelar.textContent = "Cancelar";
             botaoCancelar.className = "cancelar";
             botaoCancelar.onclick = function() {
-                listaAgendados.removeChild(item);
+                lista.removeChild(item);
                 alert(`Agendamento de ${nome} no dia ${data} às ${horario} foi cancelado.`);
             };
             
             item.appendChild(botaoCancelar);
-            listaAgendados.appendChild(item);
+            lista.appendChild(item);
             alert(`Horário ${horario} agendado para ${nome} no dia ${data}!`);
         }
     </script>
