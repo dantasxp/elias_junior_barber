@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     const timesList = document.getElementById('times-list');
     const scheduledList = document.getElementById('scheduled-list');
+    const nameInput = document.getElementById('name');
+    const dateInput = document.getElementById('date');
 
     // Função para renderizar horários disponíveis
     function renderAvailableTimes() {
@@ -18,8 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para agendar horário
     function scheduleTime(time) {
+        const name = nameInput.value.trim();
+        const date = dateInput.value;
+
+        if (!name || !date) {
+            alert('Por favor, preencha o nome e a data.');
+            return;
+        }
+
         const li = document.createElement('li');
-        li.textContent = time;
+        li.textContent = `${time} - ${name} - ${date}`;
         scheduledList.appendChild(li);
 
         // Remover horário da lista de disponíveis
@@ -28,6 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
             availableTimes.splice(index, 1);
         }
         renderAvailableTimes();  // Atualizar a lista de horários disponíveis
+
+        // Limpar campos de entrada
+        nameInput.value = '';
+        dateInput.value = '';
     }
 
     renderAvailableTimes();
