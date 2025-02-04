@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para renderizar horários disponíveis
     function renderAvailableTimes() {
+        timesList.innerHTML = '';  // Limpar a lista antes de renderizar
         availableTimes.forEach(time => {
             const li = document.createElement('li');
             li.textContent = time;
@@ -26,8 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (index > -1) {
             availableTimes.splice(index, 1);
         }
-        timesList.innerHTML = '';
-        renderAvailableTimes();
+        renderAvailableTimes();  // Atualizar a lista de horários disponíveis
     }
 
     renderAvailableTimes();
