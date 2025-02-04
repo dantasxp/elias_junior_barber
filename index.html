@@ -172,85 +172,74 @@
     <footer>
         Site made by @edsudantas
     </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
     <script>
+        // Substitua pelas suas credenciais do Firebase
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            databaseURL: "SUA_DATABASE_URL",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializa o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         function formatarData(dataISO) {
-            // Converte a data do formato ISO (YYYY-MM-DD) para DD/MM/YYYY
             const data = new Date(dataISO);
             const dia = String(data.getDate()).padStart(2, '0');
-            const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
             const ano = data.getFullYear();
             return `${dia}/${mes}/${ano}`;
         }
 
         function carregarDados() {
-            // Carregar dados salvos no localStorage
-            const dadosSalvos = localStorage.getItem("agendamentos");
-            if (dadosSalvos) {
-                const agendamentos = JSON.parse(dadosSalvos);
+            const lista = document.getElementById("scheduled-list");
+            lista.innerHTML = "";
 
-                // Limpar lista antes de carregar
-                const lista = document.getElementById("scheduled-list");
-                lista.innerHTML = "";
+            // Carregar dados do Firebase
+            database.ref("agendamentos").on("value", (snapshot) => {
+                const agendamentos = snapshot.val();
+                if (agendamentos) {
+                    Object.keys(agendamentos).forEach(key => {
+                        const agendamento = agendamentos[key];
+                        const item = document.createElement("li");
+                        item.textContent = `${agendamento.data} - ${agendamento.horario} - ${agendamento.nome}`;
 
-                // Recriar os itens da lista
-                agendamentos.forEach(agendamento => {
-                    const item = document.createElement("li");
-                    item.textContent = `${agendamento.data} - ${agendamento.horario} - ${agendamento.nome}`;
+                        // Botão para cancelar o agendamento
+                        const botaoCancelar = document.createElement("button");
+                        botaoCancelar.textContent = "Cancelar";
+                        botaoCancelar.className = "cancelar";
+                        botaoCancelar.onclick = function () {
+                            const confirmacao = confirm(`Para cancelar este agendamento, é necessário efetuar um pagamento de R$ 5,00 via PIX no número 11932184626. Após o pagamento, clique em "OK" para continuar.`);
+                            if (confirmacao) {
+                                database.ref("agendamentos").child(key).remove();
+                                alert(`Agendamento de ${agendamento.nome} no dia ${agendamento.data} às ${agendamento.horario} foi cancelado.`);
+                            } else {
+                                alert("Cancelamento não realizado. O pagamento é obrigatório.");
+                            }
+                        };
 
-                    // Botão para cancelar o agendamento
-                    const botaoCancelar = document.createElement("button");
-                    botaoCancelar.textContent = "Cancelar";
-                    botaoCancelar.className = "cancelar";
-                    botaoCancelar.onclick = function () {
-                        const confirmacao = confirm(`Para cancelar este agendamento, é necessário efetuar um pagamento de R$ 5,00 via PIX no número 11932184626. Após o pagamento, clique em "OK" para continuar.`);
-                        if (confirmacao) {
-                            lista.removeChild(item);
-                            alert(`Agendamento de ${agendamento.nome} no dia ${agendamento.data} às ${agendamento.horario} foi cancelado.`);
+                        item.appendChild(botaoCancelar);
+                        lista.appendChild(item);
 
-                            // Reativar o botão de horário correspondente
-                            const botoesHorarios = document.querySelectorAll("#times-list .horario");
-                            botoesHorarios.forEach(botao => {
-                                if (botao.textContent === agendamento.horario) {
-                                    botao.style.display = "inline-block";
-                                }
-                            });
-
-                            // Atualizar localStorage após cancelamento
-                            salvarDados();
-                        } else {
-                            alert("Cancelamento não realizado. O pagamento é obrigatório.");
-                        }
-                    };
-
-                    item.appendChild(botaoCancelar);
-                    lista.appendChild(item);
-
-                    // Ocultar botão de horário já agendado
-                    const botoesHorarios = document.querySelectorAll("#times-list .horario");
-                    botoesHorarios.forEach(botao => {
-                        if (botao.textContent === agendamento.horario) {
-                            botao.style.display = "none";
-                        }
+                        // Ocultar botão de horário já agendado
+                        const botoesHorarios = document.querySelectorAll("#times-list .horario");
+                        botoesHorarios.forEach(botao => {
+                            if (botao.textContent === agendamento.horario) {
+                                botao.style.display = "none";
+                            }
+                        });
                     });
-                });
-            }
-        }
-
-        function salvarDados() {
-            // Salvar dados no localStorage
-            const lista = document.getElementById("scheduled-list").children;
-            const agendamentos = [];
-
-            for (let i = 0; i < lista.length; i++) {
-                const texto = lista[i].textContent.split(" - ");
-                const data = texto[0];
-                const horario = texto[1];
-                const nome = texto[2];
-
-                agendamentos.push({ data, horario, nome });
-            }
-
-            localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+                }
+            });
         }
 
         function agendarHorario(event, horario) {
@@ -263,59 +252,31 @@
                 return;
             }
 
-            // Formatar a data para DD/MM/YYYY
-            let dataFormatada = formatarData(dataISO);
+            const dataFormatada = formatarData(dataISO);
 
             // Verificar se já existe um agendamento para o mesmo horário e data
-            let listaAgendados = document.getElementById("scheduled-list").children;
-            for (let i = 0; i < listaAgendados.length; i++) {
-                let item = listaAgendados[i].textContent;
-                if (item.includes(`${dataFormatada} - ${horario}`)) {
-                    alert(`O horário ${horario} já está agendado para esta data.`);
-                    return;
-                }
-            }
-
-            // Criar novo agendamento
-            let lista = document.getElementById("scheduled-list");
-            let item = document.createElement("li");
-            item.textContent = `${dataFormatada} - ${horario} - ${nome}`;
-
-            // Botão para cancelar o agendamento
-            let botaoCancelar = document.createElement("button");
-            botaoCancelar.textContent = "Cancelar";
-            botaoCancelar.className = "cancelar";
-            botaoCancelar.onclick = function () {
-                const confirmacao = confirm(`Para cancelar este agendamento, é necessário efetuar um pagamento de R$ 5,00 via PIX no número 11932184626. Após o pagamento, clique em "OK" para continuar.`);
-                if (confirmacao) {
-                    lista.removeChild(item);
-                    alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
-
-                    // Reativar o botão de horário correspondente
-                    const botoesHorarios = document.querySelectorAll("#times-list .horario");
-                    botoesHorarios.forEach(botao => {
-                        if (botao.textContent === horario) {
-                            botao.style.display = "inline-block";
+            database.ref("agendamentos").once("value").then((snapshot) => {
+                const agendamentos = snapshot.val();
+                if (agendamentos) {
+                    for (const key in agendamentos) {
+                        const agendamento = agendamentos[key];
+                        if (agendamento.data === dataFormatada && agendamento.horario === horario) {
+                            alert(`O horário ${horario} já está agendado para esta data.`);
+                            return;
                         }
-                    });
-
-                    // Atualizar localStorage após cancelamento
-                    salvarDados();
-                } else {
-                    alert("Cancelamento não realizado. O pagamento é obrigatório.");
+                    }
                 }
-            };
 
-            item.appendChild(botaoCancelar);
-            lista.appendChild(item);
-            alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
+                // Salvar novo agendamento no Firebase
+                const novoAgendamento = { data: dataFormatada, horario, nome };
+                database.ref("agendamentos").push(novoAgendamento);
 
-            // Remover o botão do horário agendado
-            const botaoClicado = event.target;
-            botaoClicado.style.display = "none";
+                alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
 
-            // Salvar dados no localStorage
-            salvarDados();
+                // Remover o botão do horário agendado
+                const botaoClicado = event.target;
+                botaoClicado.style.display = "none";
+            });
         }
 
         // Carregar dados ao iniciar a página
