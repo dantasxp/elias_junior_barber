@@ -182,6 +182,72 @@
             return `${dia}/${mes}/${ano}`;
         }
 
+        function carregarDados() {
+            // Carregar dados salvos no localStorage
+            const dadosSalvos = localStorage.getItem("agendamentos");
+            if (dadosSalvos) {
+                const agendamentos = JSON.parse(dadosSalvos);
+
+                // Limpar lista antes de carregar
+                const lista = document.getElementById("scheduled-list");
+                lista.innerHTML = "";
+
+                // Recriar os itens da lista
+                agendamentos.forEach(agendamento => {
+                    const item = document.createElement("li");
+                    item.textContent = `${agendamento.data} - ${agendamento.horario} - ${agendamento.nome}`;
+
+                    // Botão para cancelar o agendamento
+                    const botaoCancelar = document.createElement("button");
+                    botaoCancelar.textContent = "Cancelar";
+                    botaoCancelar.className = "cancelar";
+                    botaoCancelar.onclick = function () {
+                        lista.removeChild(item);
+                        alert(`Agendamento de ${agendamento.nome} no dia ${agendamento.data} às ${agendamento.horario} foi cancelado.`);
+
+                        // Reativar o botão de horário correspondente
+                        const botoesHorarios = document.querySelectorAll("#times-list .horario");
+                        botoesHorarios.forEach(botao => {
+                            if (botao.textContent === agendamento.horario) {
+                                botao.style.display = "inline-block";
+                            }
+                        });
+
+                        // Atualizar localStorage após cancelamento
+                        salvarDados();
+                    };
+
+                    item.appendChild(botaoCancelar);
+                    lista.appendChild(item);
+
+                    // Ocultar botão de horário já agendado
+                    const botoesHorarios = document.querySelectorAll("#times-list .horario");
+                    botoesHorarios.forEach(botao => {
+                        if (botao.textContent === agendamento.horario) {
+                            botao.style.display = "none";
+                        }
+                    });
+                });
+            }
+        }
+
+        function salvarDados() {
+            // Salvar dados no localStorage
+            const lista = document.getElementById("scheduled-list").children;
+            const agendamentos = [];
+
+            for (let i = 0; i < lista.length; i++) {
+                const texto = lista[i].textContent.split(" - ");
+                const data = texto[0];
+                const horario = texto[1];
+                const nome = texto[2];
+
+                agendamentos.push({ data, horario, nome });
+            }
+
+            localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+        }
+
         function agendarHorario(event, horario) {
             event.preventDefault();
             let nome = document.getElementById("name").value.trim();
@@ -209,12 +275,12 @@
             let lista = document.getElementById("scheduled-list");
             let item = document.createElement("li");
             item.textContent = `${dataFormatada} - ${horario} - ${nome}`;
-            
+
             // Botão para cancelar o agendamento
             let botaoCancelar = document.createElement("button");
             botaoCancelar.textContent = "Cancelar";
             botaoCancelar.className = "cancelar";
-            botaoCancelar.onclick = function() {
+            botaoCancelar.onclick = function () {
                 lista.removeChild(item);
                 alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
 
@@ -225,8 +291,11 @@
                         botao.style.display = "inline-block";
                     }
                 });
+
+                // Atualizar localStorage após cancelamento
+                salvarDados();
             };
-            
+
             item.appendChild(botaoCancelar);
             lista.appendChild(item);
             alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
@@ -234,7 +303,13 @@
             // Remover o botão do horário agendado
             const botaoClicado = event.target;
             botaoClicado.style.display = "none";
+
+            // Salvar dados no localStorage
+            salvarDados();
         }
+
+        // Carregar dados ao iniciar a página
+        window.onload = carregarDados;
     </script>
 </body>
 </html>
