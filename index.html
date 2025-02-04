@@ -1,48 +1,216 @@
-const timeSlots = ["10:00", "11:00", "11:30", "12:00", "13:00", "13:30", "14:00", "15:00", "15:30", "16:00", "17:00", "17:30", "18:00", "19:00", "20:00"];
-
-function loadSchedule() {
-    const scheduleContainer = document.getElementById("schedule-container");
-    scheduleContainer.innerHTML = "";
-    
-    timeSlots.forEach(slot => {
-        const div = document.createElement("div");
-        div.classList.add("time-slot");
-        
-        div.innerHTML = `
-            <label for="${slot}">${slot}</label>
-            <input type="text" id="name-${slot}" placeholder="Nome" style="width: 150px;">
-            <input type="checkbox" id="${slot}" name="timeSlot">
-        `;
-        
-        scheduleContainer.appendChild(div);
-    });
-}
-
-function confirmAppointment() {
-    let selectedAppointments = [];
-    timeSlots.forEach(slot => {
-        const checkbox = document.getElementById(slot);
-        const nameInput = document.getElementById(`name-${slot}`); // Corrigido
-        if (checkbox.checked && nameInput.value.trim() !== "") {
-            selectedAppointments.push(`${slot} - ${nameInput.value}`); // Corrigido
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elias Junior Barber - Agendamento</title>
+    <style>
+        /* Estilos globais */
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
         }
-    });
-    
-    if (selectedAppointments.length === 0) {
-        alert("Por favor, selecione um horário e insira um nome.");
-        return;
-    }
-    
-    let appointmentDate = document.getElementById("appointment-date").value;
-    if (!appointmentDate) {
-        alert("Por favor, selecione uma data.");
-        return;
-    }
-    
-    let message = `Agendamentos para ${appointmentDate}:\n${selectedAppointments.join("\n")}`; // Corrigido
-    let whatsappUrl = `https://wa.me/5511932184626?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
-}
+        header {
+            background: linear-gradient(135deg, #1e1e1e, #333);
+            padding: 20px;
+            text-align: center;
+        }
+        header img {
+            max-width: 150px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        header p {
+            font-size: 16px;
+            margin: 5px 0 0;
+        }
+        main {
+            padding: 20px;
+        }
+        label {
+            font-size: 18px;
+            margin-top: 10px;
+            display: block;
+        }
+        input, button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="text"], input[type="date"] {
+            background-color: #333;
+            color: white;
+        }
+        input:focus, button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .horario {
+            background-color: #28a745;
+            color: white;
+            margin: 5px;
+            border-radius: 10px;
+            width: 48%;
+            box-sizing: border-box;
+            transition: transform 0.2s ease;
+        }
+        .horario:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        #times-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        @media (max-width: 600px) {
+            .horario {
+                width: 100%;
+            }
+        }
+        #scheduled-times {
+            margin-top: 20px;
+        }
+        #scheduled-list {
+            list-style: none;
+            padding: 0;
+        }
+        #scheduled-list li {
+            background-color: #333;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cancelar {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .cancelar:hover {
+            background-color: #bd2130;
+        }
+        footer {
+            background: linear-gradient(135deg, #1e1e1e, #333);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="imagens/barbearia elias junior.png" alt="Elias Junior Barber" class="logo">
+        <h1>Elias Junior Barber</h1>
+        <p>Agende seu horário</p>
+    </header>
+    <main>
+        <section id="appointment-form">
+            <h2>Agendar Horário</h2>
+            <form id="form-agendamento">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" placeholder="Digite seu nome" required>
+                
+                <label for="date">Data:</label>
+                <input type="date" id="date" required>
+                
+                <h3>Escolha um horário disponível:</h3>
+                <div id="times-list">
+                    <button class="horario" onclick="agendarHorario(event, '10:00')">10:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '11:00')">11:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '11:30')">11:30</button>
+                    <button class="horario" onclick="agendarHorario(event, '12:00')">12:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '13:00')">13:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '13:30')">13:30</button>
+                    <button class="horario" onclick="agendarHorario(event, '14:00')">14:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '15:00')">15:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '15:30')">15:30</button>
+                    <button class="horario" onclick="agendarHorario(event, '16:00')">16:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '17:00')">17:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '17:30')">17:30</button>
+                    <button class="horario" onclick="agendarHorario(event, '18:00')">18:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '19:00')">19:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '20:00')">20:00</button>
+                </div>
+            </form>
+        </section>
+        <section id="scheduled-times">
+            <h2>Horários Agendados</h2>
+            <ul id="scheduled-list">
+                <!-- Horários agendados serão exibidos aqui -->
+            </ul>
+        </section>
+    </main>
+    <footer>
+        Site made by @edsudantas
+    </footer>
+    <script>
+        function agendarHorario(event, horario) {
+            event.preventDefault();
+            let nome = document.getElementById("name").value.trim();
+            let data = document.getElementById("date").value;
 
-document.getElementById("appointment-date").addEventListener("change", loadSchedule);
-window.onload = loadSchedule;
+            if (nome === "" || data === "") {
+                alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
+                return;
+            }
+
+            // Verificar se já existe um agendamento para o mesmo horário e data
+            let listaAgendados = document.getElementById("scheduled-list").children;
+            for (let i = 0; i < listaAgendados.length; i++) {
+                let item = listaAgendados[i].textContent;
+                if (item.includes(`${data} - ${horario}`)) {
+                    alert(`O horário ${horario} já está agendado para esta data.`);
+                    return;
+                }
+            }
+
+            // Criar novo agendamento
+            let lista = document.getElementById("scheduled-list");
+            let item = document.createElement("li");
+            item.textContent = `${data} - ${horario} - ${nome}`;
+            
+            // Botão para cancelar o agendamento
+            let botaoCancelar = document.createElement("button");
+            botaoCancelar.textContent = "Cancelar";
+            botaoCancelar.className = "cancelar";
+            botaoCancelar.onclick = function() {
+                lista.removeChild(item);
+                alert(`Agendamento de ${nome} no dia ${data} às ${horario} foi cancelado.`);
+            };
+            
+            item.appendChild(botaoCancelar);
+            lista.appendChild(item);
+            alert(`Horário ${horario} agendado para ${nome} no dia ${data}!`);
+        }
+    </script>
+</body>
+</html>
