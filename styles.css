@@ -122,3 +122,10 @@ input[type="text"]::placeholder {
         margin-top: 0;
     }
 }
+
+/* Ajuste para tornar a data visível */
+input[type="date"] {
+    background-color: #333; /* Ajuste para uma cor de fundo visível */
+    color: white; /* Certifique-se de que o texto esteja visível */
+    padding: 10px; /* Opcional: Adicione padding */
+}
