@@ -86,9 +86,9 @@ input[type="text"], input[type="date"] {
     border-radius: 4px;
     color: white;
     padding: 10px;
+    margin-right: 10px;
     margin-bottom: 10px;
-    width: 100%;
-    box-sizing: border-box;
+    width: calc(100% - 22px);
 }
 
 input[type="text"]::placeholder {
@@ -115,17 +115,9 @@ input[type="text"]::placeholder {
     input[type="text"], input[type="date"] {
         width: auto;
         flex: 1;
-        margin-bottom: 0;
     }
     
     button {
         margin-top: 0;
     }
-}
-
-/* Ajuste para tornar a data visível */
-input[type="date"] {
-    background-color: #333; /* Ajuste para uma cor de fundo visível */
-    color: white; /* Certifique-se de que o texto esteja visível */
-    padding: 10px; /* Opcional: Adicione padding */
 }
