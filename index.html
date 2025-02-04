@@ -1,86 +1,48 @@
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("agendamento-form").addEventListener("submit", async function (event) {
-        event.preventDefault();
+const timeSlots = ["10:00", "11:00", "11:30", "12:00", "13:00", "13:30", "14:00", "15:00", "15:30", "16:00", "17:00", "17:30", "18:00", "19:00", "20:00"];
 
-        const nome = document.getElementById("nome").value.trim();
-        const data = document.getElementById("data").value;
-        const hora = document.getElementById("hora").value;
+function loadSchedule() {
+    const scheduleContainer = document.getElementById("schedule-container");
+    scheduleContainer.innerHTML = "";
+    
+    timeSlots.forEach(slot => {
+        const div = document.createElement("div");
+        div.classList.add("time-slot");
+        
+        div.innerHTML = `
+            <label for="${slot}">${slot}</label>
+            <input type="text" id="name-${slot}" placeholder="Nome" style="width: 150px;">
+            <input type="checkbox" id="${slot}" name="timeSlot">
+        `;
+        
+        scheduleContainer.appendChild(div);
+    });
+}
 
-        if (!nome || !data || !hora) {
-            alert("Preencha todos os campos!");
-            return;
-        }
-
-        const agendamento = {
-            nome,
-            data,
-            hora,
-            timestamp: new Date().toISOString()
-        };
-
-        try {
-            await salvarAgendamentoNoGitHub(agendamento);
-            document.getElementById("mensagem").innerText = "Agendamento salvo com sucesso!";
-        } catch (error) {
-            document.getElementById("mensagem").innerText = "Erro ao salvar agendamento!";
-            console.error(error);
+function confirmAppointment() {
+    let selectedAppointments = [];
+    timeSlots.forEach(slot => {
+        const checkbox = document.getElementById(slot);
+        const nameInput = document.getElementById(`name-${slot}`); // Corrigido
+        if (checkbox.checked && nameInput.value.trim() !== "") {
+            selectedAppointments.push(`${slot} - ${nameInput.value}`); // Corrigido
         }
     });
-});
-
-async function salvarAgendamentoNoGitHub(agendamento) {
-    const repo = "SEU_USUARIO/SEU_REPOSITORIO";
-    const arquivo = "agendamentos.json";
-    const token = "SEU_GITHUB_TOKEN"; // Substitua pelo seu token pessoal
-
-    const url = `https://api.github.com/repos/${repo}/contents/${arquivo}`;
-
-    let sha = "";
-    let conteudoAtual = [];
-
-    try {
-        // Obtém o conteúdo atual do arquivo
-        const response = await fetch(url, {
-            headers: { Authorization: `token ${token}` },
-        });
-
-        if (response.ok) {
-            const json = await response.json();
-            sha = json.sha;
-            conteudoAtual = JSON.parse(atob(json.content));
-        } else if (response.status === 404) {
-            // Se o arquivo não existir, começa com um array vazio
-            conteudoAtual = [];
-        } else {
-            throw new Error(`Erro ao acessar repositório: ${response.statusText}`);
-        }
-
-        // Adiciona o novo agendamento
-        conteudoAtual.push(agendamento);
-
-        const novoConteudo = btoa(JSON.stringify(conteudoAtual, null, 2));
-
-        // Atualiza ou cria o arquivo no repositório
-        const respostaGitHub = await fetch(url, {
-            method: "PUT",
-            headers: {
-                Authorization: `token ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                message: "Atualizando agendamentos",
-                content: novoConteudo,
-                sha: sha || undefined, // Necessário para modificar o arquivo existente
-            }),
-        });
-
-        if (!respostaGitHub.ok) {
-            throw new Error(`Erro ao atualizar GitHub: ${respostaGitHub.statusText}`);
-        }
-
-        alert("Agendamento salvo no GitHub!");
-    } catch (error) {
-        console.error("Erro ao salvar agendamento:", error);
-        alert("Erro ao salvar agendamento no GitHub.");
+    
+    if (selectedAppointments.length === 0) {
+        alert("Por favor, selecione um horário e insira um nome.");
+        return;
     }
+    
+    let appointmentDate = document.getElementById("appointment-date").value;
+    if (!appointmentDate) {
+        alert("Por favor, selecione uma data.");
+        return;
+    }
+    
+    let message = `Agendamentos para ${appointmentDate}:\n${selectedAppointments.join("\n")}`; // Corrigido
+    let whatsappUrl = `https://wa.me/5511932184626?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
 }
+
+document.getElementById("appointment-date").addEventListener("change", loadSchedule);
+window.onload = loadSchedule;
