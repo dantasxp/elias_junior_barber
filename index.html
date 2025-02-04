@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elias Junior Barber - Agendamento</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             background-color: #222;
@@ -44,6 +43,12 @@
         .horario:hover {
             background-color: #218838;
         }
+        .cancelar {
+            background-color: #dc3545;
+        }
+        .cancelar:hover {
+            background-color: #bd2130;
+        }
     </style>
 </head>
 <body>
@@ -61,7 +66,6 @@
                 
                 <label for="date">Data:</label>
                 <input type="date" id="date" required>
-
                 <h3>Escolha um horário disponível:</h3>
                 <div id="times-list">
                     <button class="horario" onclick="agendarHorario(event, '09:00')">09:00</button>
@@ -91,8 +95,18 @@
             let listaAgendados = document.getElementById("scheduled-list");
             let item = document.createElement("li");
             item.textContent = `${data} - ${horario} - ${nome}`;
+            
+            // Botão para cancelar o agendamento
+            let botaoCancelar = document.createElement("button");
+            botaoCancelar.textContent = "Cancelar";
+            botaoCancelar.className = "cancelar";
+            botaoCancelar.onclick = function() {
+                listaAgendados.removeChild(item);
+                alert(`Agendamento de ${nome} no dia ${data} às ${horario} foi cancelado.`);
+            };
+            
+            item.appendChild(botaoCancelar);
             listaAgendados.appendChild(item);
-
             alert(`Horário ${horario} agendado para ${nome} no dia ${data}!`);
         }
     </script>
