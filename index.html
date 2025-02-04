@@ -5,22 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elias Junior Barber - Agendamento</title>
     <style>
+        /* Estilos globais */
         body {
             background-color: #121212;
             color: white;
             font-family: 'Arial', sans-serif;
-            text-align: center;
             margin: 0;
             padding: 0;
+            line-height: 1.6;
         }
         header {
-            background-color: #1e1e1e;
+            background: linear-gradient(135deg, #1e1e1e, #333);
             padding: 20px;
             text-align: center;
         }
         header img {
             max-width: 150px;
             margin-bottom: 10px;
+            border-radius: 10px;
         }
         header h1 {
             font-size: 24px;
@@ -44,11 +46,16 @@
             margin: 10px 0;
             font-size: 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
         }
         input[type="text"], input[type="date"] {
             background-color: #333;
             color: white;
+        }
+        input:focus, button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
         button {
             background-color: #007bff;
@@ -62,12 +69,14 @@
             background-color: #28a745;
             color: white;
             margin: 5px;
-            border-radius: 5px;
+            border-radius: 10px;
             width: 48%;
             box-sizing: border-box;
+            transition: transform 0.2s ease;
         }
         .horario:hover {
             background-color: #218838;
+            transform: scale(1.05);
         }
         #times-list {
             display: flex;
@@ -90,7 +99,7 @@
             background-color: #333;
             margin: 10px 0;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -100,14 +109,15 @@
             color: white;
             border: none;
             padding: 10px 15px;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         .cancelar:hover {
             background-color: #bd2130;
         }
         footer {
-            background-color: #1e1e1e;
+            background: linear-gradient(135deg, #1e1e1e, #333);
             color: white;
             text-align: center;
             padding: 15px;
