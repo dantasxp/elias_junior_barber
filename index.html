@@ -1,216 +1,124 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elias Junior Barber - Agendamento</title>
-    <style>
-        /* Estilos globais */
-        body {
-            background-color: #121212;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
-        header {
-            background: linear-gradient(135deg, #1e1e1e, #333);
-            padding: 20px;
-            text-align: center;
-        }
-        header img {
-            max-width: 150px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-        }
-        header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
-        header p {
-            font-size: 16px;
-            margin: 5px 0 0;
-        }
-        main {
-            padding: 20px;
-        }
-        label {
-            font-size: 18px;
-            margin-top: 10px;
-            display: block;
-        }
-        input, button {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            transition: background-color 0.3s ease;
-        }
-        input[type="text"], input[type="date"] {
-            background-color: #333;
-            color: white;
-        }
-        input:focus, button:focus {
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .horario {
-            background-color: #28a745;
-            color: white;
-            margin: 5px;
-            border-radius: 10px;
-            width: 48%;
-            box-sizing: border-box;
-            transition: transform 0.2s ease;
-        }
-        .horario:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-        #times-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        @media (max-width: 600px) {
-            .horario {
-                width: 100%;
-            }
-        }
-        #scheduled-times {
-            margin-top: 20px;
-        }
-        #scheduled-list {
-            list-style: none;
-            padding: 0;
-        }
-        #scheduled-list li {
-            background-color: #333;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .cancelar {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .cancelar:hover {
-            background-color: #bd2130;
-        }
-        footer {
-            background: linear-gradient(135deg, #1e1e1e, #333);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <img src="imagens/barbearia elias junior.png" alt="Elias Junior Barber" class="logo">
-        <h1>Elias Junior Barber</h1>
-        <p>Agende seu horário</p>
-    </header>
-    <main>
-        <section id="appointment-form">
-            <h2>Agendar Horário</h2>
-            <form id="form-agendamento">
-                <label for="name">Nome:</label>
-                <input type="text" id="name" placeholder="Digite seu nome" required>
-                
-                <label for="date">Data:</label>
-                <input type="date" id="date" required>
-                
-                <h3>Escolha um horário disponível:</h3>
-                <div id="times-list">
-                    <button class="horario" onclick="agendarHorario(event, '10:00')">10:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '11:00')">11:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '11:30')">11:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '12:00')">12:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '13:00')">13:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '13:30')">13:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '14:00')">14:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '15:00')">15:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '15:30')">15:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '16:00')">16:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '17:00')">17:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '17:30')">17:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '18:00')">18:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '19:00')">19:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '20:00')">20:00</button>
-                </div>
-            </form>
-        </section>
-        <section id="scheduled-times">
-            <h2>Horários Agendados</h2>
-            <ul id="scheduled-list">
-                <!-- Horários agendados serão exibidos aqui -->
-            </ul>
-        </section>
-    </main>
-    <footer>
-        Site made by @edsudantas
-    </footer>
-    <script>
-        function agendarHorario(event, horario) {
-            event.preventDefault();
-            let nome = document.getElementById("name").value.trim();
-            let data = document.getElementById("date").value;
+/* Estilos gerais */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    background-image: url('imagens/background.jpg');
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
 
-            if (nome === "" || data === "") {
-                alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
-                return;
-            }
+header {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
 
-            // Verificar se já existe um agendamento para o mesmo horário e data
-            let listaAgendados = document.getElementById("scheduled-list").children;
-            for (let i = 0; i < listaAgendados.length; i++) {
-                let item = listaAgendados[i].textContent;
-                if (item.includes(`${data} - ${horario}`)) {
-                    alert(`O horário ${horario} já está agendado para esta data.`);
-                    return;
-                }
-            }
+.logo {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px;
+}
 
-            // Criar novo agendamento
-            let lista = document.getElementById("scheduled-list");
-            let item = document.createElement("li");
-            item.textContent = `${data} - ${horario} - ${nome}`;
-            
-            // Botão para cancelar o agendamento
-            let botaoCancelar = document.createElement("button");
-            botaoCancelar.textContent = "Cancelar";
-            botaoCancelar.className = "cancelar";
-            botaoCancelar.onclick = function() {
-                lista.removeChild(item);
-                alert(`Agendamento de ${nome} no dia ${data} às ${horario} foi cancelado.`);
-            };
-            
-            item.appendChild(botaoCancelar);
-            lista.appendChild(item);
-            alert(`Horário ${horario} agendado para ${nome} no dia ${data}!`);
-        }
-    </script>
-</body>
-</html>
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+section {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 90%;
+    max-width: 600px;
+}
+
+h2 {
+    border-bottom: 2px solid #444;
+    padding-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #333;
+    border-radius: 4px;
+    margin: 10px 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+button {
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    align-self: center;
+}
+
+button:hover {
+    background-color: #666;
+}
+
+input[type="text"], input[type="date"] {
+    background-color: #444;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+/* Media queries para dispositivos móveis */
+@media (min-width: 600px) {
+    main {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+    section {
+        width: 45%;
+    }
+    
+    li {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    input[type="text"], input[type="date"] {
+        width: auto;
+        flex: 1;
+        margin-bottom: 0;
+    }
+    
+    button {
+        margin-top: 0;
+    }
+}
