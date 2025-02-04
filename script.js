@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
         scheduledList.appendChild(li);
 
         // Remover horário da lista de disponíveis
-        availableTimes.splice(availableTimes.indexOf(time), 1);
+        const index = availableTimes.indexOf(time);
+        if (index > -1) {
+            availableTimes.splice(index, 1);
+        }
         timesList.innerHTML = '';
         renderAvailableTimes();
     }
