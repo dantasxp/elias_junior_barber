@@ -86,16 +86,16 @@ input[type="text"], input[type="date"] {
     border-radius: 4px;
     color: white;
     padding: 10px;
-    margin-right: 10px;
     margin-bottom: 10px;
-    width: calc(100% - 22px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 input[type="text"]::placeholder {
     color: #aaa;
 }
 
-/* Media queries para dispositivos móveis */
+/* Media queries para dispositivos mÃ³veis */
 @media (min-width: 600px) {
     main {
         flex-direction: row;
@@ -115,6 +115,7 @@ input[type="text"]::placeholder {
     input[type="text"], input[type="date"] {
         width: auto;
         flex: 1;
+        margin-bottom: 0;
     }
     
     button {
