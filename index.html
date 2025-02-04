@@ -5,6 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elias Junior Barber - Agendamento</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        input, button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        input[type="date"] {
+            color: white;
+            background-color: #444;
+            border: 1px solid white;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .horario {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            width: 200px;
+        }
+        .horario:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -22,14 +62,13 @@
                 <label for="date">Data:</label>
                 <input type="date" id="date" required>
 
-                <button type="submit">Agendar</button>
+                <h3>Escolha um horário disponível:</h3>
+                <div id="times-list">
+                    <button class="horario" onclick="agendarHorario(event, '09:00')">09:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '10:00')">10:00</button>
+                    <button class="horario" onclick="agendarHorario(event, '11:00')">11:00</button>
+                </div>
             </form>
-        </section>
-        <section id="available-times">
-            <h2>Horários Disponíveis</h2>
-            <ul id="times-list">
-                <!-- Horários serão adicionados aqui pelo JavaScript -->
-            </ul>
         </section>
         <section id="scheduled-times">
             <h2>Horários Agendados</h2>
@@ -38,6 +77,24 @@
             </ul>
         </section>
     </main>
-    <script src="script.js"></script>
+    <script>
+        function agendarHorario(event, horario) {
+            event.preventDefault();
+            let nome = document.getElementById("name").value;
+            let data = document.getElementById("date").value;
+            
+            if (nome === "" || data === "") {
+                alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
+                return;
+            }
+
+            let listaAgendados = document.getElementById("scheduled-list");
+            let item = document.createElement("li");
+            item.textContent = `${data} - ${horario} - ${nome}`;
+            listaAgendados.appendChild(item);
+
+            alert(`Horário ${horario} agendado para ${nome} no dia ${data}!`);
+        }
+    </script>
 </body>
 </html>
