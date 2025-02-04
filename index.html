@@ -6,26 +6,53 @@
     <title>Elias Junior Barber - Agendamento</title>
     <style>
         body {
-            background-color: #222;
+            background-color: #121212;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #1e1e1e;
+            padding: 20px;
             text-align: center;
         }
-        input, button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px;
-            font-size: 16px;
+        header img {
+            max-width: 150px;
+            margin-bottom: 10px;
         }
-        input[type="date"] {
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        header p {
+            font-size: 16px;
+            margin: 5px 0 0;
+        }
+        main {
+            padding: 20px;
+        }
+        label {
+            font-size: 18px;
+            margin-top: 10px;
+            display: block;
+        }
+        input, button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+        input[type="text"], input[type="date"] {
+            background-color: #333;
             color: white;
-            background-color: #444;
-            border: 1px solid white;
         }
         button {
             background-color: #007bff;
             color: white;
-            border: none;
             cursor: pointer;
         }
         button:hover {
@@ -34,20 +61,58 @@
         .horario {
             background-color: #28a745;
             color: white;
-            padding: 10px;
             margin: 5px;
-            cursor: pointer;
-            border: none;
-            width: 200px;
+            border-radius: 5px;
+            width: 48%;
+            box-sizing: border-box;
         }
         .horario:hover {
             background-color: #218838;
         }
+        #times-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        @media (max-width: 600px) {
+            .horario {
+                width: 100%;
+            }
+        }
+        #scheduled-times {
+            margin-top: 20px;
+        }
+        #scheduled-list {
+            list-style: none;
+            padding: 0;
+        }
+        #scheduled-list li {
+            background-color: #333;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .cancelar {
             background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
         }
         .cancelar:hover {
             background-color: #bd2130;
+        }
+        footer {
+            background-color: #1e1e1e;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -62,10 +127,11 @@
             <h2>Agendar Horário</h2>
             <form id="form-agendamento">
                 <label for="name">Nome:</label>
-                <input type="text" id="name" required>
+                <input type="text" id="name" placeholder="Digite seu nome" required>
                 
                 <label for="date">Data:</label>
                 <input type="date" id="date" required>
+                
                 <h3>Escolha um horário disponível:</h3>
                 <div id="times-list">
                     <button class="horario" onclick="agendarHorario(event, '10:00')">10:00</button>
@@ -93,6 +159,9 @@
             </ul>
         </section>
     </main>
+    <footer>
+        &copy; 2023 Elias Junior Barber. Todos os direitos reservados.
+    </footer>
     <script>
         function agendarHorario(event, horario) {
             event.preventDefault();
