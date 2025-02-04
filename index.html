@@ -173,21 +173,33 @@
         Site made by @edsudantas
     </footer>
     <script>
+        function formatarData(dataISO) {
+            // Converte a data do formato ISO (YYYY-MM-DD) para DD/MM/YYYY
+            const data = new Date(dataISO);
+            const dia = String(data.getDate()).padStart(2, '0');
+            const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+            const ano = data.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+
         function agendarHorario(event, horario) {
             event.preventDefault();
             let nome = document.getElementById("name").value.trim();
-            let data = document.getElementById("date").value;
+            let dataISO = document.getElementById("date").value;
 
-            if (nome === "" || data === "") {
+            if (nome === "" || dataISO === "") {
                 alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
                 return;
             }
+
+            // Formatar a data para DD/MM/YYYY
+            let dataFormatada = formatarData(dataISO);
 
             // Verificar se já existe um agendamento para o mesmo horário e data
             let listaAgendados = document.getElementById("scheduled-list").children;
             for (let i = 0; i < listaAgendados.length; i++) {
                 let item = listaAgendados[i].textContent;
-                if (item.includes(`${data} - ${horario}`)) {
+                if (item.includes(`${dataFormatada} - ${horario}`)) {
                     alert(`O horário ${horario} já está agendado para esta data.`);
                     return;
                 }
@@ -196,7 +208,7 @@
             // Criar novo agendamento
             let lista = document.getElementById("scheduled-list");
             let item = document.createElement("li");
-            item.textContent = `${data} - ${horario} - ${nome}`;
+            item.textContent = `${dataFormatada} - ${horario} - ${nome}`;
             
             // Botão para cancelar o agendamento
             let botaoCancelar = document.createElement("button");
@@ -204,12 +216,24 @@
             botaoCancelar.className = "cancelar";
             botaoCancelar.onclick = function() {
                 lista.removeChild(item);
-                alert(`Agendamento de ${nome} no dia ${data} às ${horario} foi cancelado.`);
+                alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
+
+                // Reativar o botão de horário correspondente
+                const botoesHorarios = document.querySelectorAll("#times-list .horario");
+                botoesHorarios.forEach(botao => {
+                    if (botao.textContent === horario) {
+                        botao.style.display = "inline-block";
+                    }
+                });
             };
             
             item.appendChild(botaoCancelar);
             lista.appendChild(item);
-            alert(`Horário ${horario} agendado para ${nome} no dia ${data}!`);
+            alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
+
+            // Remover o botão do horário agendado
+            const botaoClicado = event.target;
+            botaoClicado.style.display = "none";
         }
     </script>
 </body>
