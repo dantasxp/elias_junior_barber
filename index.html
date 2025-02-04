@@ -1,44 +1,86 @@
-<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("agendamento-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const nome = document.getElementById("nome").value.trim();
+        const data = document.getElementById("data").value;
+        const hora = document.getElementById("hora").value;
+
+        if (!nome || !data || !hora) {
+            alert("Preencha todos os campos!");
+            return;
+        }
+
+        const agendamento = {
+            nome,
+            data,
+            hora,
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            await salvarAgendamentoNoGitHub(agendamento);
+            document.getElementById("mensagem").innerText = "Agendamento salvo com sucesso!";
+        } catch (error) {
+            document.getElementById("mensagem").innerText = "Erro ao salvar agendamento!";
+            console.error(error);
+        }
+    });
+});
+
 async function salvarAgendamentoNoGitHub(agendamento) {
     const repo = "SEU_USUARIO/SEU_REPOSITORIO";
     const arquivo = "agendamentos.json";
-    const token = "SEU_GITHUB_TOKEN"; // Gere um Token Pessoal no GitHub
-    
+    const token = "SEU_GITHUB_TOKEN"; // Substitua pelo seu token pessoal
+
     const url = `https://api.github.com/repos/${repo}/contents/${arquivo}`;
-    
-    // Obtém o conteúdo atual do arquivo
-    const response = await fetch(url, {
-        headers: { Authorization: `token ${token}` },
-    });
 
     let sha = "";
     let conteudoAtual = [];
 
-    if (response.ok) {
-        const json = await response.json();
-        sha = json.sha;
-        conteudoAtual = JSON.parse(atob(json.content));
+    try {
+        // Obtém o conteúdo atual do arquivo
+        const response = await fetch(url, {
+            headers: { Authorization: `token ${token}` },
+        });
+
+        if (response.ok) {
+            const json = await response.json();
+            sha = json.sha;
+            conteudoAtual = JSON.parse(atob(json.content));
+        } else if (response.status === 404) {
+            // Se o arquivo não existir, começa com um array vazio
+            conteudoAtual = [];
+        } else {
+            throw new Error(`Erro ao acessar repositório: ${response.statusText}`);
+        }
+
+        // Adiciona o novo agendamento
+        conteudoAtual.push(agendamento);
+
+        const novoConteudo = btoa(JSON.stringify(conteudoAtual, null, 2));
+
+        // Atualiza ou cria o arquivo no repositório
+        const respostaGitHub = await fetch(url, {
+            method: "PUT",
+            headers: {
+                Authorization: `token ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                message: "Atualizando agendamentos",
+                content: novoConteudo,
+                sha: sha || undefined, // Necessário para modificar o arquivo existente
+            }),
+        });
+
+        if (!respostaGitHub.ok) {
+            throw new Error(`Erro ao atualizar GitHub: ${respostaGitHub.statusText}`);
+        }
+
+        alert("Agendamento salvo no GitHub!");
+    } catch (error) {
+        console.error("Erro ao salvar agendamento:", error);
+        alert("Erro ao salvar agendamento no GitHub.");
     }
-
-    // Adiciona o novo agendamento
-    conteudoAtual.push(agendamento);
-
-    const novoConteudo = btoa(JSON.stringify(conteudoAtual, null, 2));
-
-    // Atualiza o arquivo no repositório
-    await fetch(url, {
-        method: "PUT",
-        headers: {
-            Authorization: `token ${token}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            message: "Atualizando agendamentos",
-            content: novoConteudo,
-            sha: sha, // Necessário para modificar o arquivo existente
-        }),
-    });
-
-    alert("Agendamento salvo no GitHub!");
 }
-</script>
