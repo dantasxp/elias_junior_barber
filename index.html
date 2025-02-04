@@ -1,286 +1,42 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elias Junior Barber - Agendamento</title>
-    <style>
-        /* Estilos globais */
-        body {
-            background-color: #121212;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
-        header {
-            background: linear-gradient(135deg, #1e1e1e, #333);
-            padding: 20px;
-            text-align: center;
-        }
-        header img {
-            max-width: 150px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-        }
-        header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
-        header p {
-            font-size: 16px;
-            margin: 5px 0 0;
-        }
-        main {
-            padding: 20px;
-        }
-        label {
-            font-size: 18px;
-            margin-top: 10px;
-            display: block;
-        }
-        input, button {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            transition: background-color 0.3s ease;
-        }
-        input[type="text"], input[type="date"] {
-            background-color: #333;
-            color: white;
-        }
-        input:focus, button:focus {
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .horario {
-            background-color: #28a745;
-            color: white;
-            margin: 5px;
-            border-radius: 10px;
-            width: 48%;
-            box-sizing: border-box;
-            transition: transform 0.2s ease;
-        }
-        .horario:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-        #times-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        @media (max-width: 600px) {
-            .horario {
-                width: 100%;
-            }
-        }
-        #scheduled-times {
-            margin-top: 20px;
-        }
-        #scheduled-list {
-            list-style: none;
-            padding: 0;
-        }
-        #scheduled-list li {
-            background-color: #333;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .cancelar {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .cancelar:hover {
-            background-color: #bd2130;
-        }
-        footer {
-            background: linear-gradient(135deg, #1e1e1e, #333);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <img src="imagens/barbearia elias junior.png" alt="Elias Junior Barber" class="logo">
-        <h1>Elias Junior Barber</h1>
-        <p>Agende seu horário</p>
-    </header>
-    <main>
-        <section id="appointment-form">
-            <h2>Agendar Horário</h2>
-            <form id="form-agendamento">
-                <label for="name">Nome:</label>
-                <input type="text" id="name" placeholder="Digite seu nome" required>
-                
-                <label for="date">Data:</label>
-                <input type="date" id="date" required>
-                
-                <h3>Escolha um horário disponível:</h3>
-                <div id="times-list">
-                    <button class="horario" onclick="agendarHorario(event, '10:00')">10:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '11:00')">11:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '11:30')">11:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '12:00')">12:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '13:00')">13:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '13:30')">13:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '14:00')">14:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '15:00')">15:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '15:30')">15:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '16:00')">16:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '17:00')">17:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '17:30')">17:30</button>
-                    <button class="horario" onclick="agendarHorario(event, '18:00')">18:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '19:00')">19:00</button>
-                    <button class="horario" onclick="agendarHorario(event, '20:00')">20:00</button>
-                </div>
-            </form>
-        </section>
-        <section id="scheduled-times">
-            <h2>Horários Agendados</h2>
-            <ul id="scheduled-list">
-                <!-- Horários agendados serão exibidos aqui -->
-            </ul>
-        </section>
-    </main>
-    <footer>
-        Site made by @edsudantas
-    </footer>
+async function salvarAgendamentoNoGitHub(agendamento) {
+    const repo = "SEU_USUARIO/SEU_REPOSITORIO";
+    const arquivo = "agendamentos.json";
+    const token = "SEU_GITHUB_TOKEN"; // Gere um Token Pessoal no GitHub
+    
+    const url = `https://api.github.com/repos/${repo}/contents/${arquivo}`;
+    
+    // Obtém o conteúdo atual do arquivo
+    const response = await fetch(url, {
+        headers: { Authorization: `token ${token}` },
+    });
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
-    <script>
-        // Substitua pelas suas credenciais do Firebase
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            databaseURL: "SUA_DATABASE_URL",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
+    let sha = "";
+    let conteudoAtual = [];
 
-        // Inicializa o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+    if (response.ok) {
+        const json = await response.json();
+        sha = json.sha;
+        conteudoAtual = JSON.parse(atob(json.content));
+    }
 
-        function formatarData(dataISO) {
-            const data = new Date(dataISO);
-            const dia = String(data.getDate()).padStart(2, '0');
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const ano = data.getFullYear();
-            return `${dia}/${mes}/${ano}`;
-        }
+    // Adiciona o novo agendamento
+    conteudoAtual.push(agendamento);
 
-        function carregarDados() {
-            const lista = document.getElementById("scheduled-list");
-            lista.innerHTML = "";
+    const novoConteudo = btoa(JSON.stringify(conteudoAtual, null, 2));
 
-            // Carregar dados do Firebase
-            database.ref("agendamentos").on("value", (snapshot) => {
-                const agendamentos = snapshot.val();
-                if (agendamentos) {
-                    Object.keys(agendamentos).forEach(key => {
-                        const agendamento = agendamentos[key];
-                        const item = document.createElement("li");
-                        item.textContent = `${agendamento.data} - ${agendamento.horario} - ${agendamento.nome}`;
+    // Atualiza o arquivo no repositório
+    await fetch(url, {
+        method: "PUT",
+        headers: {
+            Authorization: `token ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            message: "Atualizando agendamentos",
+            content: novoConteudo,
+            sha: sha, // Necessário para modificar o arquivo existente
+        }),
+    });
 
-                        // Botão para cancelar o agendamento
-                        const botaoCancelar = document.createElement("button");
-                        botaoCancelar.textContent = "Cancelar";
-                        botaoCancelar.className = "cancelar";
-                        botaoCancelar.onclick = function () {
-                            const confirmacao = confirm(`Para cancelar este agendamento, é necessário efetuar um pagamento de R$ 5,00 via PIX no número 11932184626. Após o pagamento, clique em "OK" para continuar.`);
-                            if (confirmacao) {
-                                database.ref("agendamentos").child(key).remove();
-                                alert(`Agendamento de ${agendamento.nome} no dia ${agendamento.data} às ${agendamento.horario} foi cancelado.`);
-                            } else {
-                                alert("Cancelamento não realizado. O pagamento é obrigatório.");
-                            }
-                        };
-
-                        item.appendChild(botaoCancelar);
-                        lista.appendChild(item);
-
-                        // Ocultar botão de horário já agendado
-                        const botoesHorarios = document.querySelectorAll("#times-list .horario");
-                        botoesHorarios.forEach(botao => {
-                            if (botao.textContent === agendamento.horario) {
-                                botao.style.display = "none";
-                            }
-                        });
-                    });
-                }
-            });
-        }
-
-        function agendarHorario(event, horario) {
-            event.preventDefault();
-            let nome = document.getElementById("name").value.trim();
-            let dataISO = document.getElementById("date").value;
-
-            if (nome === "" || dataISO === "") {
-                alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
-                return;
-            }
-
-            const dataFormatada = formatarData(dataISO);
-
-            // Verificar se já existe um agendamento para o mesmo horário e data
-            database.ref("agendamentos").once("value").then((snapshot) => {
-                const agendamentos = snapshot.val();
-                if (agendamentos) {
-                    for (const key in agendamentos) {
-                        const agendamento = agendamentos[key];
-                        if (agendamento.data === dataFormatada && agendamento.horario === horario) {
-                            alert(`O horário ${horario} já está agendado para esta data.`);
-                            return;
-                        }
-                    }
-                }
-
-                // Salvar novo agendamento no Firebase
-                const novoAgendamento = { data: dataFormatada, horario, nome };
-                database.ref("agendamentos").push(novoAgendamento);
-
-                alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
-
-                // Remover o botão do horário agendado
-                const botaoClicado = event.target;
-                botaoClicado.style.display = "none";
-            });
-        }
-
-        // Carregar dados ao iniciar a página
-        window.onload = carregarDados;
-    </script>
-</body>
-</html>
+    alert("Agendamento salvo no GitHub!");
+}
