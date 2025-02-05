@@ -143,18 +143,20 @@
                 "18:00", "19:00", "20:00"
             ];
 
+            // Exibir horários disponíveis na tela
             availableTimes.forEach(time => {
                 let button = document.createElement("button");
                 button.className = "horario";
                 button.textContent = time;
+                button.dataset.time = time; // Adicionando um atributo para o horário
                 button.addEventListener("click", function(event) {
-                    agendarHorario(event, time, button);
+                    agendarHorario(event, button);
                 });
-                timesList.appendChild(button);
+                timesList.appendChild(button); // Adicionando o botão à lista de horários
             });
         });
 
-        function agendarHorario(event, horario, button) {
+        function agendarHorario(event, button) {
             event.preventDefault();
             let nome = document.getElementById("name").value.trim();
             let data = document.getElementById("date").value;
@@ -170,23 +172,23 @@
             let dataFormatada = data.split("-").reverse().join("/");
             let lista = document.getElementById("scheduled-list");
             let item = document.createElement("li");
-            item.innerHTML = `${dataFormatada} - ${horario} - ${nome}`;
+            item.innerHTML = `${dataFormatada} - ${button.dataset.time} - ${nome}`;
 
             let botaoCancelar = document.createElement("button");
             botaoCancelar.textContent = "Cancelar";
             botaoCancelar.className = "cancelar";
             botaoCancelar.addEventListener("click", function() {
                 lista.removeChild(item);
-                alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
+                alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${button.dataset.time} foi cancelado.`);
             });
 
             item.appendChild(botaoCancelar);
             lista.appendChild(item);
 
-            // Remover o botão do horário selecionado da lista de disponíveis
+            // Remover o botão do horário selecionado da lista de horários disponíveis
             button.remove();
 
-            alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
+            alert(`Horário ${button.dataset.time} agendado para ${nome} no dia ${dataFormatada}!`);
         }
     </script>
 </body>
