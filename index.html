@@ -47,11 +47,13 @@
         item.appendChild(botaoCancelar);
         lista.appendChild(item);
 
-        // Remover o horário da lista de disponíveis
-        let horarioButton = document.querySelector(`.horario:contains('${horario}')`);
-        if (horarioButton) {
-            horarioButton.remove();
-        }
+        // Remover o botão do horário selecionado da lista de disponíveis
+        let buttons = document.querySelectorAll('.horario');
+        buttons.forEach(button => {
+            if (button.textContent === horario) {
+                button.remove();
+            }
+        });
 
         alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
     }
