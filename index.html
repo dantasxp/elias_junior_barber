@@ -1,56 +1,191 @@
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const timesList = document.getElementById("times-list");
-        const availableTimes = [
-            "10:00", "11:00", "11:30", "12:00", "13:00", "13:30",
-            "14:00", "15:00", "15:30", "16:00", "17:00", "17:30",
-            "18:00", "19:00", "20:00"
-        ];
-
-        // Cria os botões de horário inicialmente
-        availableTimes.forEach(time => {
-            let button = document.createElement("button");
-            button.className = "horario";
-            button.textContent = time;
-            button.addEventListener("click", function(event) {
-                agendarHorario(event, time, button);
-            });
-            timesList.appendChild(button);
-        });
-    });
-
-    function agendarHorario(event, horario, button) {
-        event.preventDefault();
-        let nome = document.getElementById("name").value.trim();
-        let data = document.getElementById("date").value;
-
-        if (nome === "" || data === "") {
-            alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
-            return;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elias Junior Barber - Agendamento</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
         }
+        header {
+            background: linear-gradient(135deg, #1e1e1e, #333);
+            padding: 20px;
+            text-align: center;
+        }
+        header img {
+            max-width: 150px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        label {
+            font-size: 18px;
+            display: block;
+            margin-top: 10px;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="text"], input[type="date"] {
+            background-color: #333;
+            color: white;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .horario {
+            background-color: #28a745;
+            color: white;
+            margin: 5px;
+            width: 48%;
+            box-sizing: border-box;
+            transition: transform 0.2s ease;
+        }
+        .horario:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        #times-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        @media (max-width: 600px) {
+            .horario {
+                width: 100%;
+            }
+        }
+        #scheduled-list {
+            list-style: none;
+            padding: 0;
+        }
+        #scheduled-list li {
+            background-color: #333;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cancelar {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .cancelar:hover {
+            background-color: #bd2130;
+        }
+        footer {
+            background: linear-gradient(135deg, #1e1e1e, #333);
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="imagens/barbearia elias junior.png" alt="Elias Junior Barber" class="logo">
+        <h1>Elias Junior Barber</h1>
+        <p>Agende seu horário</p>
+    </header>
+    <main>
+        <section id="appointment-form">
+            <h2>Agendar Horário</h2>
+            <form id="form-agendamento">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" placeholder="Digite seu nome" required>
 
-        let confirmacao = confirm("Será cobrada uma taxa de R$ 10,00 para agendar. O valor será abatido do corte. Deseja continuar?");
-        if (!confirmacao) return;
+                <label for="date">Data:</label>
+                <input type="date" id="date" required>
 
-        let dataFormatada = data.split("-").reverse().join("/");
-        let lista = document.getElementById("scheduled-list");
-        let item = document.createElement("li");
-        item.innerHTML = `${dataFormatada} - ${horario} - ${nome}`;
+                <h3>Escolha um horário disponível:</h3>
+                <div id="times-list"></div>
+            </form>
+        </section>
+        <section id="scheduled-times">
+            <h2>Horários Agendados</h2>
+            <ul id="scheduled-list"></ul>
+        </section>
+    </main>
+    <footer>
+        Site made by @edsudantas
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const timesList = document.getElementById("times-list");
+            const availableTimes = [
+                "10:00", "11:00", "11:30", "12:00", "13:00", "13:30",
+                "14:00", "15:00", "15:30", "16:00", "17:00", "17:30",
+                "18:00", "19:00", "20:00"
+            ];
 
-        let botaoCancelar = document.createElement("button");
-        botaoCancelar.textContent = "Cancelar";
-        botaoCancelar.className = "cancelar";
-        botaoCancelar.addEventListener("click", function() {
-            lista.removeChild(item);
-            alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
+            availableTimes.forEach(time => {
+                let button = document.createElement("button");
+                button.className = "horario";
+                button.textContent = time;
+                button.addEventListener("click", function(event) {
+                    agendarHorario(event, time);
+                });
+                timesList.appendChild(button);
+            });
         });
 
-        item.appendChild(botaoCancelar);
-        lista.appendChild(item);
+        function agendarHorario(event, horario) {
+            event.preventDefault();
+            let nome = document.getElementById("name").value.trim();
+            let data = document.getElementById("date").value;
 
-        // Remover o botão do horário selecionado da lista de disponíveis
-        button.remove();
+            if (nome === "" || data === "") {
+                alert("Preencha seu nome e escolha uma data antes de selecionar um horário.");
+                return;
+            }
 
-        alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
-    }
-</script>
+            let confirmacao = confirm("Será cobrada uma taxa de R$ 10,00 para agendar. O valor será abatido do corte. Deseja continuar?");
+            if (!confirmacao) return;
+
+            let dataFormatada = data.split("-").reverse().join("/");
+            let lista = document.getElementById("scheduled-list");
+            let item = document.createElement("li");
+            item.innerHTML = ${dataFormatada} - ${horario} - ${nome};
+
+            let botaoCancelar = document.createElement("button");
+            botaoCancelar.textContent = "Cancelar";
+            botaoCancelar.className = "cancelar";
+            botaoCancelar.addEventListener("click", function() {
+                lista.removeChild(item);
+                alert(Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.);
+            });
+
+            item.appendChild(botaoCancelar);
+            lista.appendChild(item);
+
+            document.querySelector(.horario:contains('${horario}')).remove();
+            alert(Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!);
+        }
+    </script>
+</body>
+</html>
