@@ -7,18 +7,19 @@
             "18:00", "19:00", "20:00"
         ];
 
+        // Cria os botões de horário inicialmente
         availableTimes.forEach(time => {
             let button = document.createElement("button");
             button.className = "horario";
             button.textContent = time;
             button.addEventListener("click", function(event) {
-                agendarHorario(event, time);
+                agendarHorario(event, time, button);
             });
             timesList.appendChild(button);
         });
     });
 
-    function agendarHorario(event, horario) {
+    function agendarHorario(event, horario, button) {
         event.preventDefault();
         let nome = document.getElementById("name").value.trim();
         let data = document.getElementById("date").value;
@@ -48,12 +49,7 @@
         lista.appendChild(item);
 
         // Remover o botão do horário selecionado da lista de disponíveis
-        let buttons = document.querySelectorAll('.horario');
-        buttons.forEach(button => {
-            if (button.textContent === horario) {
-                button.remove();
-            }
-        });
+        button.remove();
 
         alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
     }
