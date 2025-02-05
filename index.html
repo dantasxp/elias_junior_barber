@@ -148,13 +148,13 @@
                 button.className = "horario";
                 button.textContent = time;
                 button.addEventListener("click", function(event) {
-                    agendarHorario(event, time);
+                    agendarHorario(event, time, button);
                 });
                 timesList.appendChild(button);
             });
         });
 
-        function agendarHorario(event, horario) {
+        function agendarHorario(event, horario, button) {
             event.preventDefault();
             let nome = document.getElementById("name").value.trim();
             let data = document.getElementById("date").value;
@@ -170,21 +170,23 @@
             let dataFormatada = data.split("-").reverse().join("/");
             let lista = document.getElementById("scheduled-list");
             let item = document.createElement("li");
-            item.innerHTML = ${dataFormatada} - ${horario} - ${nome};
+            item.innerHTML = `${dataFormatada} - ${horario} - ${nome}`;
 
             let botaoCancelar = document.createElement("button");
             botaoCancelar.textContent = "Cancelar";
             botaoCancelar.className = "cancelar";
             botaoCancelar.addEventListener("click", function() {
                 lista.removeChild(item);
-                alert(Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.);
+                alert(`Agendamento de ${nome} no dia ${dataFormatada} às ${horario} foi cancelado.`);
             });
 
             item.appendChild(botaoCancelar);
             lista.appendChild(item);
 
-            document.querySelector(.horario:contains('${horario}')).remove();
-            alert(Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!);
+            // Remover o botão do horário selecionado da lista de disponíveis
+            button.remove();
+
+            alert(`Horário ${horario} agendado para ${nome} no dia ${dataFormatada}!`);
         }
     </script>
 </body>
